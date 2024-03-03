@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSE564 Lab 2</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href=".\static\css\screeplot.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="{{ url_for('static', filename='global.js') }}"></script>
+</head>
+<body>
+
+<div class="container mt-4">
+  <h1 class="text-center">CSE564 Lab 2</h1>
+
+  <!-- Buttons Row -->
+  <div class="row mt-4">
+    <div class="col-3">
+      <button type="button" id="scree-plot-btn" class="btn btn-primary btn-block">Scree Plot</button>
+    </div>
+    <div class="col-3">
+      <button type="button" id="bi-plot-btn" class="btn btn-primary btn-block">Bi-Plot</button>
+    </div>
+    <div class="col-3">
+      <button type="button" class="btn btn-primary btn-block">K-means Curve</button>
+    </div>
+    <div class="col-3">
+      <button type="button" class="btn btn-primary btn-block">Scatter-Plot Matrix</button>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col d-flex justify-content-center">
+      Selected IDI value is :  
+      <div id= "selected_idi">   </div>
+    </div>
+
+  </div>
+
+  <!-- Chart Space -->
+  <div class="row mt-4">
+    <div class="col d-flex justify-content-center">
+      <div id="chart-container" style="height: 400px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='ScreePlot.js') }}"></script>
+
+</body>
+</html>

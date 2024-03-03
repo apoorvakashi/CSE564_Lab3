@@ -1,0 +1,9 @@
+.tooltipScree{
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.dot:hover{
+    cursor: pointer;
+}
