@@ -8,15 +8,14 @@
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href=".\static\css\screeplot.css">
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="{{ url_for('static', filename='global.js') }}"></script>
 </head>
 <body>
 
 <div class="container mt-4">
-  <h1 class="text-center">CSE564 Lab 2</h1>
+  <h2 class="text-center">CSE564 Lab 2</h2>
 
-  <!-- Buttons Row -->
-  <div class="row mt-4">
+  <!-- Buttons Row
+   <div class="row mt-4">
     <div class="col-3">
       <button type="button" id="scree-plot-btn" class="btn btn-primary btn-block">Scree Plot</button>
     </div>
@@ -24,12 +23,12 @@
       <button type="button" id="bi-plot-btn" class="btn btn-primary btn-block">Bi-Plot</button>
     </div>
     <div class="col-3">
-      <button type="button" class="btn btn-primary btn-block">K-means Curve</button>
+      <button type="button" id="k-plot-btn" class="btn btn-primary btn-block">K-means Curve</button>
     </div>
     <div class="col-3">
-      <button type="button" class="btn btn-primary btn-block">Scatter-Plot Matrix</button>
+      <button type="button" id="scatter-plot-btn" class="btn btn-primary btn-block">Scatter-Plot Matrix</button>
     </div>
-  </div>
+  </div> -->
 
   <div class="row mt-4">
     <div class="col d-flex justify-content-center">
@@ -42,9 +41,29 @@
   <!-- Chart Space -->
   <div class="row mt-4">
     <div class="col d-flex justify-content-center">
-      <div id="chart-container" style="height: 400px;"></div>
-    </div>
+      <div class = "row" id="scree-plot-container"></div>
   </div>
+</div>
+<div class="row mt-4">
+  <div class="col d-flex justify-content-center">
+    <div class = "row" id="attribute_table"></div>
+</div>
+</div>
+<div class="row mt-4">
+  <div class="col d-flex justify-content-center">
+    <div class = "row" id="bi-plot-container"></div>
+</div>
+</div>
+<div class="row mt-4">
+  <div class="col d-flex justify-content-center">
+    <div class = "row" id="elbow-plot-container"></div>
+
+</div>
+</div>
+<div class="row mt-4">
+  <div class="col d-flex justify-content-center">
+    <div class = "row" id="scatter-plot-container"></div>
+</div>
 </div>
 
 <!-- Bootstrap JS and jQuery -->
@@ -52,8 +71,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-<script src="{{ url_for('static', filename='ScreePlot.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ScreePlot.js') }}"></script>
+<script src="{{ url_for('static', filename='js/BiPlot.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ScatterPlot.js') }}"></script>
+
+
 
 </body>
 </html>
