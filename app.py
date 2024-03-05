@@ -56,13 +56,31 @@ def receive_idi():
 
 @app.route('/elbow_plot_data')
 def elbow_plot_data():
+    
+    idi = session.get('idi', 0)
+    k = session.get('k', 0)
+    print("IDI : ", idi)
+    
+    if idi == 0:
+        return jsonify({'error': 'Dimensionality index not set'})
+    if k == 0:
+        return jsonify({'error': 'K value not set'})
+    
+    pca = PCA(n_components=idi)
+    pcs = pca.fit_transform(data_standardized)
+    
+    column_names = [f'PC{i+1}' for i in range(pcs.shape[1])]
+    pca_df = pd.DataFrame(data=pcs, columns=column_names)
+    # pca_df_standardized = scaler.fit_transform(pca_df)
+    
     distortions = []
     
     K = range(1,11)
-    for k in K:
-        kmeans = KMeans(n_clusters=k, random_state=0)
-        kmeans.fit(data_standardized)
+    for i in K:
+        kmeans = KMeans(n_clusters=i, random_state=0)
+        kmeans.fit(pca_df)
         distortions.append(kmeans.inertia_)
+
         
     chart_data = {
         "K" : list(K),
@@ -98,8 +116,22 @@ def pca_idi_data():
     scatterplot_data = df[top4_attributes].to_dict(orient='records')
     # print("top4_attributes ", top4_attributes)
     
+    
+    #perform kmeans on selected k
+    
+    column_names = [f'PC{i+1}' for i in range(pcs.shape[1])]
+    pca_df = pd.DataFrame(data=pcs, columns=column_names)
+    kmeans = KMeans(n_clusters=k, random_state=0)
+    kmeans.fit(pca_df)
+    cluster_labels = kmeans.labels_
+    pca_df['cluster_id'] = cluster_labels
+    
+    # print(len(pca_df['cluster_id']))
+    # print(pca_df['cluster_id'])
+    
     chart_data = {"top4_attributes": top4_attributes,
                     "scatterplot_data" : scatterplot_data,
+                    "cluster_id" : pca_df['cluster_id'].to_list(),
                     "sum_sq_loadings" : top4_values,
                     "pca_loadings": loadings[:2].tolist(),
                     "pca_scores": pcs[:, :2].tolist(),

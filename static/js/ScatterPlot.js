@@ -1,35 +1,10 @@
-document.addEventListener('DOMContentLoaded', function() {
-
-    fetch('/receive_data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({'idi' : selected_idi, 'k' : selected_k})
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data); // Log the response from the Flask route
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-
-    fetch('/pca_idi_data')
-        .then(response => response.json())
-        .then(data => {
-            // Once data is fetched, create the scatter plot matrix
-            renderScatterPlotMatrix(data);
-            // renderAttributeTable(data);
-        })
-        .catch(error => console.error('Error:', error));
-});
-
-
 function renderScatterPlotMatrix(scatter_plot_data) {
 
-    data = scatter_plot_data.scatterplot_data;
-    columns = scatter_plot_data.top4_attributes;
+    console.log("Rendering Scatter Plot");
+
+    var data = scatter_plot_data.scatterplot_data;
+    var columns = scatter_plot_data.top4_attributes;
+    var cluster_id = scatter_plot_data.cluster_id;
 
     var svgWidth = 600;
     var svgHeight = 600;
@@ -106,18 +81,18 @@ function renderScatterPlotMatrix(scatter_plot_data) {
                     .style('text-anchor', 'middle')
                     .style('font-weight', 'bold') // Increase font boldness
                     .style('font-size', '16px')
-                    .text(columns[i])
-                    .each(function() { // Add background box
-                        var bbox = this.getBBox();
-                        plot.insert('rect', 'text')
-                            .attr('x', bbox.x - 5)
-                            .attr('y', bbox.y - 5)
-                            .attr('width', bbox.width + 10)
-                            .attr('height', bbox.height + 10)
-                            .style('fill', 'red')
-                            .style('fill-opacity', 0.2)
-                            .lower();
-                    });
+                    .text(columns[i]);
+                    // .each(function() { // Add background box
+                    //     var bbox = this.getBBox();
+                    //     plot.insert('rect', 'text')
+                    //         .attr('x', bbox.x - 5)
+                    //         .attr('y', bbox.y - 5)
+                    //         .attr('width', bbox.width + 10)
+                    //         .attr('height', bbox.height + 10)
+                    //         .style('fill', 'red')
+                    //         .style('fill-opacity', 0.2)
+                    //         .lower();
+                    // });
             } else {
                 // Non-diagonal plots: Add only dots
                 plot.selectAll('circle')

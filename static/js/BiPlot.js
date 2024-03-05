@@ -1,28 +1,3 @@
-document.addEventListener('DOMContentLoaded', function() {
-
-    fetch('/receive_data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({'idi' : selected_idi, 'k' : selected_k})
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data); // Log the response from the Flask route
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-
-    fetch('/pca_idi_data')
-        .then(response => response.json())
-        .then(data => {
-            d3.select("#bi-plot-container").selectAll("*").remove();
-            renderBiPlot(data);
-        })
-        .catch(error => console.error('Error fetching bi plot data:', error));
-});
 
 function renderBiPlot(data) {
     // Clear any existing SVG to make room for the biplot
@@ -30,6 +5,7 @@ function renderBiPlot(data) {
     var pcaLoadings = data.pca_loadings;
     var pcaScores = data.pca_scores;
     var features = data.features;
+    var cluster_id = data.cluster_id;
 
     // Set the dimensions and margins of the graph
     const margin = {top: 20, right: 30, bottom: 40, left: 90},

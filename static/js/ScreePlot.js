@@ -1,22 +1,8 @@
 // ScreePlot.js
 
-document.addEventListener('DOMContentLoaded', function() {
-
-    updateSelectedIDIValue()
-    console.log(selected_idi)
-    d3.select("#scree-plot-container").selectAll("*").remove();
-    fetch('/pca_data')
-        .then(response => response.json())
-        .then(data => {
-            // Call the function to render the scree plot defined in ScreePlot.js
-            renderScreePlot(data.pca_scree_plot_data);
-        })
-        .catch(error => console.error('Error fetching scree plot data:', error));
-});
-
 // Function to render the scree plot using D3.js
-function renderScreePlot(screePlotData, selected_components = 0) {
-    console.log("Rendering scree plot")
+function renderScreePlot(screePlotData, selected_components = selected_idi) {
+    console.log("Rendering scree plot with idi = ", selected_components)
     selected_idi = selected_components;
     // Your D3.js code to render the scree plot using the received data
     var svgWidth = 600;
@@ -57,7 +43,7 @@ function renderScreePlot(screePlotData, selected_components = 0) {
 
     // X-axis label
     svg.append("text")
-        .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 40) + ")")
+        .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 30) + ")")
         .style("text-anchor", "middle")
         .style("font-size", "16px")
         .style("font-weight", "bold")
@@ -82,9 +68,10 @@ function renderScreePlot(screePlotData, selected_components = 0) {
         .attr("y", function(d) { return y(d.eigenvalue); })
         .attr("width", (width/20)-1) // width of the bar
         .attr("height", function(d) { return height - y(d.eigenvalue); }) // height of the bar
-        .style("fill", function(_, i) {
-            return i < selected_components ? "orange" : "lightgray";
-        });
+        .style("fill", "orange")
+        .style("fill-opacity", function(_, i) {
+            return i < selected_components ? 1 : 0.4;
+        })
 
 
     svg.selectAll(".line-segment")
@@ -92,7 +79,8 @@ function renderScreePlot(screePlotData, selected_components = 0) {
         .enter().append("path")
         .attr("class", "line-segment")
         .attr('fill', 'none')
-        .attr("stroke", "#808080") // Set default stroke color for the entire line
+        .attr("stroke", "red")
+        .attr("stroke-opacity", 0.5) // Set default stroke color for the entire line
         .attr('stroke-width', 1.5) // Set default stroke width for the entire line
         .attr('d', d3.line()
             .x(function(d) { return x(d.factor); })
@@ -116,8 +104,9 @@ function renderScreePlot(screePlotData, selected_components = 0) {
         .attr("class", "dot")
         .attr("cx", function(d) { return x(d.factor); })
         .attr("cy", function(d) { return y(d.cumulative_eigenvalue);})
-        .style("fill", function(_, i) {
-            return i < selected_components ? "red" : "#808080";
+        .style("fill", "red")
+        .style("fill-opacity", function(_, i) {
+            return i < selected_components ? 1 : 0.4;
         })
         .attr("r", function(_, i) {
             return i < selected_components ? 6 : 5;
@@ -128,14 +117,14 @@ function renderScreePlot(screePlotData, selected_components = 0) {
             updateSelectedIDIValue()
             console.log("Dot", i.factor, " clicked");
             updateScreePlot(screePlotData, i.factor);
-            // updateBiPlot();
-            // updateScatterPlot();
-            // updateAttributeTable();
+            fetchandRenderElbowPlot();
+            fetchandRenderScatterPlot();
+            fetchandRenderBiPlot();
         });
 
     dots.append("title")
         .attr("class", "tooltipScree")
-        .text((d, i) => `PC${i} : ${d.cumulative_eigenvalue.toFixed(4)}`);
+        .text((d, i) => `PC${i+1} : ${d.cumulative_eigenvalue.toFixed(2) * 100}%`);
 
 }
 
