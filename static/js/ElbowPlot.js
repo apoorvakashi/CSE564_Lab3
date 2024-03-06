@@ -42,7 +42,7 @@ function renderElbowPlot(data){
         });
 
     // Draw dots
-    svg.selectAll(".dot")
+    const dots = svg.selectAll(".dot")
         .data(distortions)
         .enter().append("circle")
         .attr("class", "dot")
@@ -55,6 +55,9 @@ function renderElbowPlot(data){
             return i == selected_k-1? "red":"orange"
         })
         .on("click", function(event, d) {
+
+            selected_k = distortions.indexOf(d) + 1;
+            console.log("K is now ",  selected_k);
 
             svg.selectAll(".dot")
             .attr("r", 5)
@@ -71,6 +74,11 @@ function renderElbowPlot(data){
             fetchandRenderScatterPlot();
             fetchandRenderBiPlot();
         });
+
+    
+    dots.append("title")
+        .text((d, i) =>  ` K : ${i+1} \nDistortion : ${d.toFixed(2)}`)
+        .attr("style", "fill: red;"); 
 
     // Add x axis
     svg.append("g")

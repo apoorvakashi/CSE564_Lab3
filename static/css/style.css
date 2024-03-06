@@ -1,0 +1,43 @@
+.tooltipScree{
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.dot:hover{
+    cursor: pointer;
+}
+
+#attribute-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#attribute-table th,
+#attribute-table td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#attribute-table th:first-child,
+#attribute-table td:first-child {
+    width: 30%; /* Adjust the width as needed */
+}
+
+#attribute-table th:nth-child(2),
+#attribute-table td:nth-child(2) {
+    width: 18%; /* Adjust the width as needed */
+}
+
+.header-cell {
+    background-color: red; /* Set background color for header cells */
+    color: white; /* Set text color for header cells */
+    font-weight: bold; /* Make header text bold */
+}
+
+/* Define styles for content cells */
+.content-cell {
+    background-color: lightgrey; /* Set background color for content cells */
+    color: black; /* Set text color for content cells */
+}

@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
@@ -7,8 +7,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from flask import jsonify
 
+values = {}
+
 app = Flask(__name__)
-app.secret_key = "e8be294b0b0f4e40a3f30f855a76b205"
 
 df = pd.read_csv('data/data_1000.csv')
 # features = ['Overall', 'Balance', 'Stamina', 'Strength', 'HeadingAccuracy',
@@ -47,18 +48,18 @@ def pca_data():
 def receive_idi():
     print("Getting latest IDI value")
     data = request.get_json()
-    session['idi'] = data['idi']
-    session['k'] = data['k']
+    values['idi'] = data['idi']
+    values['k'] = data['k']
     return jsonify({'message': 'IDI received successfully',
-                    "idi" : session["idi"],
-                    "k" : session['k']})
+                    "idi" : values["idi"],
+                    "k" : values['k']})
     
 
 @app.route('/elbow_plot_data')
 def elbow_plot_data():
     
-    idi = session.get('idi', 0)
-    k = session.get('k', 0)
+    idi = values.get('idi', 0)
+    k = values.get('k', 0)
     print("IDI : ", idi)
     
     if idi == 0:
@@ -92,10 +93,14 @@ def elbow_plot_data():
 
 @app.route('/pca_idi_data')
 def pca_idi_data():
-    idi = session.get('idi', 0)
-    k = session.get('k', 0)
-    print("IDI : ", idi)
     
+    idi = values.get('idi', 0)
+    k = values.get('k', 0)
+    
+    print("IDI : " , idi)
+    print("K : " , k)
+    
+
     if idi == 0:
         return jsonify({'error': 'Dimensionality index not set'})
     if k == 0:

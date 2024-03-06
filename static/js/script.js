@@ -79,8 +79,10 @@ function fetchandRenderScatterPlot(){
         .then(data => {
             // Once data is fetched, create the scatter plot matrix
             d3.select("#scatter-plot-container").selectAll("*").remove();
+            d3.select("#attribute-table").selectAll("*").remove();
+
             renderScatterPlotMatrix(data);
-            // renderAttributeTable(data);
+            renderAttributeTable(data);
         })
         .catch(error => console.error('Error:', error));
 

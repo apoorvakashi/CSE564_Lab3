@@ -5,6 +5,22 @@ function renderScatterPlotMatrix(scatter_plot_data) {
     var data = scatter_plot_data.scatterplot_data;
     var columns = scatter_plot_data.top4_attributes;
     var cluster_id = scatter_plot_data.cluster_id;
+    var clusters = Array.from(new Set(cluster_id))
+
+    data.forEach(d => {
+        // Assign a color to each data point based on its cluster ID
+        d.cluster_id = cluster_id[data.indexOf(d)]
+    });
+
+    console.log(data)
+    const colorScale = d3.scaleOrdinal()
+        .domain(clusters) // Assuming species attribute is present in your data
+        .range(d3.schemeCategory10);
+
+    data.forEach(d => {
+        // Assign a color to each data point based on its cluster ID
+        d.color = colorScale(d.cluster_id);
+    });
 
     var svgWidth = 600;
     var svgHeight = 600;
@@ -31,9 +47,10 @@ function renderScatterPlotMatrix(scatter_plot_data) {
                 .attr('width', svgWidth)
                 .attr('height', svgHeight);
 
+
     // Create plots
-    for (var i = 0; i < columns.length; i++) {
-        for (var j = 0; j < columns.length; j++) {
+    for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < 4; j++) {
             var plotX = i * (plotWidth + 10);
             var plotY = j * (plotHeight + 10);
 
@@ -71,7 +88,7 @@ function renderScatterPlotMatrix(scatter_plot_data) {
                     .attr('cx', function(d) { return xScale(d[columns[i]]); })
                     .attr('cy', function(d) { return yScale(d[columns[j]]); })
                     .attr('r', 1.5)
-                    .style('fill', 'blue')
+                    .style("fill", "orange")
                     .style('fill-opacity', 0.0);
 
                 plot.append('text')
@@ -102,9 +119,66 @@ function renderScatterPlotMatrix(scatter_plot_data) {
                     .attr('cx', function(d) { return xScale(d[columns[i]]); })
                     .attr('cy', function(d) { return yScale(d[columns[j]]); })
                     .attr('r', 1.5)
-                    .style('fill', 'orange');
+                    .style('fill', d => d.color);
             }
         }
     }
 }
-    
+
+function renderAttributeTable(data) {
+    console.log("Rendering Attribute Table");
+
+    const top4_attributes = data.top4_attributes;
+    const sum_sq_loadings = data.sum_sq_loadings;
+
+    const tableContainer = document.querySelector('#attribute-table');
+
+    // Create table element
+    const table = document.createElement('table');
+
+    // Create second header row for attribute names
+    const attributeRow = document.createElement('tr');
+
+    // Create header for the "Feature" column
+    const attributeHeader = document.createElement('th');
+    attributeHeader.textContent = 'Feature';
+    attributeHeader.classList.add('header-cell'); // Add class for styling
+    attributeRow.appendChild(attributeHeader);
+
+    // Create table headers for attribute names
+    top4_attributes.forEach(attribute => {
+        const th = document.createElement('th');
+        th.textContent = attribute;
+        th.classList.add('header-cell'); // Add class for styling
+        attributeRow.appendChild(th);
+    });
+
+    // Append the second header row to the table
+    table.appendChild(attributeRow);
+
+    // Create a row for sum of square loadings
+    const sumRow = document.createElement('tr');
+
+    // Create table data for sum of square loadings
+    const sumHeader = document.createElement('td');
+    sumHeader.textContent = 'Sum of Square Loadings';
+    sumHeader.classList.add('header-cell'); // Add class for styling
+    sumRow.appendChild(sumHeader);
+
+    // Create table data for sum of square loading values
+    sum_sq_loadings.forEach(sum => {
+        const td = document.createElement('td');
+        td.textContent = sum;
+        td.classList.add('content-cell'); // Add class for styling
+        sumRow.appendChild(td);
+    });
+
+    // Append the sum row to the table
+    table.appendChild(sumRow);
+
+    // Append the table to the container
+    tableContainer.appendChild(table);
+}
+
+
+
