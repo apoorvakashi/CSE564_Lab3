@@ -5,9 +5,9 @@ function renderScreePlot(screePlotData, selected_components = selected_idi) {
     console.log("Rendering scree plot with idi = ", selected_components)
     selected_idi = selected_components;
     // Your D3.js code to render the scree plot using the received data
-    var svgWidth = 600;
-    var svgHeight = 400;
-    var margin = { top: 20, right: 20, bottom: 80, left: 80 };
+    var svgWidth = 700;
+    var svgHeight = 350;
+    var margin = { top: 20, right: 20, bottom: 60, left: 60 };
     var width = svgWidth - margin.left - margin.right;
     var height = svgHeight - margin.top - margin.bottom;
 
@@ -20,7 +20,7 @@ function renderScreePlot(screePlotData, selected_components = selected_idi) {
 
     // X Scale
     var x = d3.scaleLinear()
-        .domain([0, d3.max(screePlotData, function(d) { return d.factor; })])
+        .domain([0, 1 + d3.max(screePlotData, function(d) { return d.factor; })])
         .range([0, width]);
 
     // Y Scale
@@ -114,7 +114,7 @@ function renderScreePlot(screePlotData, selected_components = selected_idi) {
         .on("click", function(d, i) {
             // Reset previous highlighting
             selected_idi = i.factor;
-            updateSelectedIDIValue()
+            // updateSelectedIDIValue()
             console.log("Dot", i.factor, " clicked");
             updateScreePlot(screePlotData, i.factor);
             fetchandRenderElbowPlot();

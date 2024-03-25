@@ -41,3 +41,14 @@
     background-color: lightgrey; /* Set background color for content cells */
     color: black; /* Set text color for content cells */
 }
+
+#fifa-header{
+    background-color: rgb(52, 52, 140);
+}
+
+/* Ensure the layout doesn't break on smaller screens */
+@media (max-width: 991px) {
+    .border-right {
+        border-right: none;
+    }
+  }

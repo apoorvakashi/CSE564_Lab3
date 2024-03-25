@@ -11,17 +11,17 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchandRenderScatterPlot();
 });
 
-function updateSelectedIDIValue() {
-    // Get the selected_idi div element
-    var selectedIDIElement = document.getElementById('selected_idi');
-    // Update the content with the value of selectedComponents
-    if (selected_idi === 0){
-        selectedIDIElement.textContent = "Null";
-    }
-    else{
-        selectedIDIElement.textContent = selected_idi;
-    }
-}
+// function updateSelectedIDIValue() {
+//     // Get the selected_idi div element
+//     var selectedIDIElement = document.getElementById('selected_idi');
+//     // Update the content with the value of selectedComponents
+//     if (selected_idi === 0){
+//         selectedIDIElement.textContent = "Null";
+//     }
+//     else{
+//         selectedIDIElement.textContent = selected_idi;
+//     }
+// }
 
 // Function to load external JavaScript files dynamically
 function loadScript(url, callback) {
@@ -34,7 +34,7 @@ function loadScript(url, callback) {
 
 
 function fetchandRenderScreePlot(){
-    updateSelectedIDIValue()
+    // updateSelectedIDIValue()
     console.log(selected_idi)
     d3.select("#scree-plot-container").selectAll("*").remove();
     fetch('/pca_data')
@@ -81,7 +81,7 @@ function fetchandRenderScatterPlot(){
             d3.select("#scatter-plot-container").selectAll("*").remove();
             d3.select("#attribute-table").selectAll("*").remove();
 
-            renderScatterPlotMatrix(data);
+            renderScatterPlotMatrix(data.scatter_plot_data);
             renderAttributeTable(data);
         })
         .catch(error => console.error('Error:', error));
@@ -110,7 +110,7 @@ function fetchandRenderBiPlot(){
             d3.select("#bi-plot-container").selectAll("*").remove();
             renderBiPlot(data);
         })
-        .catch(error => console.error('Error fetching bi plot data:', error));
+    .catch(error => console.error('Error fetching bi plot data:', error));
 
 }
 

@@ -11,61 +11,58 @@
 </head>
 <body>
 
-<div class="container mt-4">
-  <h2 class="text-center">CSE564 Lab 2</h2>
+  <header id = "fifa-header"class="p-3 d-flex align-items-center justify-content-center">
+    <h2 class="h2" style="color: azure;">FIFA Visualization Dashboard</h2>
+  </header>
 
-  <!-- Buttons Row
-   <div class="row mt-4">
-    <div class="col-3">
-      <button type="button" id="scree-plot-btn" class="btn btn-primary btn-block">Scree Plot</button>
-    </div>
-    <div class="col-3">
-      <button type="button" id="bi-plot-btn" class="btn btn-primary btn-block">Bi-Plot</button>
-    </div>
-    <div class="col-3">
-      <button type="button" id="k-plot-btn" class="btn btn-primary btn-block">K-means Curve</button>
-    </div>
-    <div class="col-3">
-      <button type="button" id="scatter-plot-btn" class="btn btn-primary btn-block">Scatter-Plot Matrix</button>
-    </div>
-  </div> -->
-
-  <div class="row mt-4">
-    <div class="col d-flex justify-content-center">
-      Selected IDI value is :  
-      <div id= "selected_idi">   </div>
-    </div>
-
-  </div>
+<div class="container-fluid">
 
   <!-- Chart Space -->
-  <div class="row mt-4">
-    <div class="col d-flex justify-content-center">
-      <div class = "row" id="scree-plot-container"></div>
+  <div class="row border-bottom mt-2">
+
+    <div class="col-md-6 border-right">
+      <h4 class="text-center">Scree plot</h4>
+
+      <div class = "border graph-container d-flex justify-content-center">
+        <div id="scree-plot-container"></div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <h4 class="text-center">K-means Elbow Plot</h4>
+
+      <div class = "border graph-container d-flex justify-content-center" >
+        
+        <div id="elbow-plot-container"></div>
+      </div>
+    </div>
+
   </div>
-</div>
-<div class="row mt-4">
-  <div class="col d-flex justify-content-center">
-    <div class = "row" id="attribute-table"></div>
-</div>
-</div>
-<div class="row mt-4">
-  <div class="col d-flex justify-content-center">
-    <div class = "row" id="elbow-plot-container"></div>
+
+  <div class="row mt-2">
+
+    <div class="col-md-6 border-right">
+      <h4 class="text-center">Top Attributes, Biplot</h4>
+        <div class = " row border graph-container d-flex justify-content-center" >
+          <div id="attribute-table" class="col-md-12 table-container"></div>
+        </div>
+        <div class = "border graph-container d-flex justify-content-center" >
+          <div id="bi-plot-container" class = "col-md-12 plot-container"></div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6 ">
+      <h4 class="text-center">Scatterplot Matrix</h4>
+      <div class = "border graph-container d-flex justify-content-center" >
+        <div id="scatter-plot-container" >
+          
+        </div>
+      </div>
+    </div>
 
 </div>
-<div class="row mt-4">
-  <div class="col d-flex justify-content-center">
-    <div class = "row" id="bi-plot-container"></div>
-</div>
-</div>
 
-</div>
-<div class="row mt-4">
-  <div class="col d-flex justify-content-center">
-    <div class = "row" id="scatter-plot-container"></div>
-</div>
-</div>
 
 <!-- Bootstrap JS and jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

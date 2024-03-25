@@ -3,9 +3,9 @@ function renderElbowPlot(data){
     var kValues = data.K
     var distortions = data.distortions
 
-    var svgWidth = 600;
-    var svgHeight = 400;
-    var margin = { top: 40, right: 40, bottom: 80, left: 80 };
+    var svgWidth = 700;
+    var svgHeight = 350;
+    var margin = { top: 40, right: 40, bottom: 60, left: 80 };
     var width = svgWidth - margin.left - margin.right;
     var height = svgHeight - margin.top - margin.bottom;
 
@@ -35,11 +35,7 @@ function renderElbowPlot(data){
         .attr("d", line)
         .attr("fill", "none")
         .attr("stroke", "orange")
-        .attr("stroke-width", 2)
-        .on("click", function(d, i) {
-            // Handle click event
-            // Add your logic to highlight the selected dot
-        });
+        .attr("stroke-width", 2);
 
     // Draw dots
     const dots = svg.selectAll(".dot")
@@ -146,4 +142,38 @@ function renderElbowPlot(data){
         .style("font-size", "16px")
         .style("font-weight", "bold")
         .text("Distortion: " +  String(distortions[selected_k-1].toFixed(2)));
+
+    const elbowPoint = findElbowPoint(distortions);
+    console.log("Elbow point", elbowPoint)
+    if (elbowPoint) {
+        svg.append("line")
+            .attr("x1", xScale(elbowPoint.k))
+            .attr("y1", yScale(distortions[elbowPoint.k - 1]))
+            .attr("x2", xScale(elbowPoint.k))
+            .attr("y2", yScale(elbowPoint.value))
+            .attr("stroke", "red")
+            .attr("stroke-dasharray", "4");
+
+        svg.append("path")
+            .attr("d", d3.symbol().type(d3.symbolStar).size(50))
+            .attr("transform", `translate(${xScale(elbowPoint.k)},${yScale(elbowPoint.value)}) rotate(-90)`)
+            .attr("fill", "blue");
+    }
+}
+
+function findElbowPoint(distortions) {
+    let distances = [];
+
+    // Calculate the line from the first to the last point
+    let lineSlope = (distortions[distortions.length - 1] - distortions[0]) / (distortions.length - 1);
+    let lineIntercept = distortions[0];
+
+    distortions.forEach((inertia, index) => {
+        let lineY = lineSlope * index + lineIntercept;
+        distances.push({ k: index + 1, distance: Math.abs(inertia - lineY), value: inertia });
+    });
+
+    // Find the point with the maximum distance from the line
+    distances.sort((a, b) => b.distance - a.distance);
+    return distances[0];
 }

@@ -11,14 +11,17 @@ values = {}
 
 app = Flask(__name__)
 
-df = pd.read_csv('data/data_1000.csv')
-# features = ['Overall', 'Balance', 'Stamina', 'Strength', 'HeadingAccuracy',
-#             'ShortPassing', 'LongPassing', 'Dribbling', 'BallControl', 'Acceleration',
-#             'SprintSpeed', 'Agility', 'ShotPower', 'Aggression', 'Jumping', 'Vision',
-#             'Composure', 'StandingTackle', 'SlidingTackle']
-df = df.dropna()
-# df = df.head(1000)
-# df.to_csv("data_1000.csv", index = False)
+data = pd.read_csv('data/data_1000_final.csv')
+features = ['Name', 'Overall', 'Balance', 'Stamina', 'Strength', 'HeadingAccuracy',
+             'BallControl', 'Acceleration',
+            'SprintSpeed', 'Agility', 'Aggression', 'Jumping', 'Vision',
+            'Composure', 'StandingTackle', 'SlidingTackle']
+data = data[features]
+data = data.dropna()
+# data = data.head(1000)
+# data.to_csv("data_1000_final.csv", index = False)
+
+df = data.drop(columns=['Name'])
 
 scaler = StandardScaler()
 data_standardized = scaler.fit_transform(df)
@@ -38,7 +41,7 @@ def pca_data():
     chart_data = {
         "explained_variance_ratios": explained_variance_ratios.tolist(),
         "explained_variance_ratios_cumsum": np.cumsum(explained_variance_ratios).tolist(),
-        "pca_scree_plot_data" : [{"factor": i + 1, "eigenvalue": explained_variance_ratios[i],"cumulative_eigenvalue": np.cumsum(explained_variance_ratios)[i]} for i in range(19)]
+        "pca_scree_plot_data" : [{"factor": i + 1, "eigenvalue": explained_variance_ratios[i],"cumulative_eigenvalue": np.cumsum(explained_variance_ratios)[i]} for i in range(15)]
     }
     
     return jsonify(chart_data)
@@ -110,20 +113,18 @@ def pca_idi_data():
     pcs = pca.fit_transform(data_standardized)
     
     loadings = pca.components_
-    squared_sum_loadings = np.sum(np.square(pca.components_), axis=0)
+    explained_variance_ratio = pca.explained_variance_ratio_
+    squared_sum_loadings = np.sum(loadings ** 2, axis=0)
     top4_indices = np.argsort(squared_sum_loadings)[::-1][:4]
 
     top4_attributes = [df.columns[i] for i in top4_indices]
     top4_values = [round(squared_sum_loadings[i], 2) for i in top4_indices]
+    top_features = df.columns[top4_indices].to_list()
 
-    top_features = df.columns[top4_indices][:2]
-    
     scatterplot_data = df[top4_attributes].to_dict(orient='records')
-    # print("top4_attributes ", top4_attributes)
     
     
     #perform kmeans on selected k
-    
     column_names = [f'PC{i+1}' for i in range(pcs.shape[1])]
     pca_df = pd.DataFrame(data=pcs, columns=column_names)
     kmeans = KMeans(n_clusters=k, random_state=0)
@@ -131,16 +132,28 @@ def pca_idi_data():
     cluster_labels = kmeans.labels_
     pca_df['cluster_id'] = cluster_labels
     
-    # print(len(pca_df['cluster_id']))
-    # print(pca_df['cluster_id'])
     
-    chart_data = {"top4_attributes": top4_attributes,
-                    "scatterplot_data" : scatterplot_data,
-                    "cluster_id" : pca_df['cluster_id'].to_list(),
-                    "sum_sq_loadings" : top4_values,
-                    "pca_loadings": loadings[:2].tolist(),
-                    "pca_scores": pcs[:, :2].tolist(),
-                    "features": top_features.tolist()
+    biplot_data = {
+                "sum_sq_loadings" : top4_values,
+                "pca_loadings": loadings[:2, :].tolist(),
+                "pca_scores": pcs[:, :2].tolist(),
+                "features": top_features,
+                "feature_names" : df.columns.to_list(),
+                "cluster_id" : pca_df['cluster_id'].to_list(),
+                "explained_variance_ratio": explained_variance_ratio[:2].tolist(),
+                "observation_names" : data['Name'].to_list()              
+    }
+    
+    scatter_plot_data = {
+                "top4_attributes": top4_attributes,
+                "scatterplot_data" : scatterplot_data,
+                "cluster_id" : pca_df['cluster_id'].to_list()
+    }
+    
+    chart_data = {
+                "biplot_data" : biplot_data,
+                "scatter_plot_data" : scatter_plot_data,
+                "sos_loadings" : top4_values
                     }
     
     return jsonify(chart_data)
@@ -149,3 +162,4 @@ def pca_idi_data():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    

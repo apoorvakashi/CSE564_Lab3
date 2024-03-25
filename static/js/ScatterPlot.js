@@ -22,15 +22,15 @@ function renderScatterPlotMatrix(scatter_plot_data) {
         d.color = colorScale(d.cluster_id);
     });
 
-    var svgWidth = 600;
-    var svgHeight = 600;
+    var svgWidth = 650;
+    var svgHeight = 650;
     var margin = { top: 20, right: 20, bottom: 20, left: 20 };
     var width = svgWidth - margin.left - margin.right;
     var height = svgHeight - margin.top - margin.bottom;
 
     // Calculate dimensions for each plot
-    var plotWidth = (width - (columns.length - 1) * 10) / columns.length;
-    var plotHeight = (height - (columns.length - 1) * 10) / columns.length;
+    var plotWidth = 10 + (width - (columns.length - 1) * 10) / columns.length;
+    var plotHeight = 10 + (height - (columns.length - 1) * 10) / columns.length;
 
     // Create scales
     var xScale = d3.scaleLinear()
@@ -67,18 +67,6 @@ function renderScatterPlotMatrix(scatter_plot_data) {
                 .style('stroke', '#000')
                 .style('stroke-width', '1px');
 
-            // // Add axis ticks and labels
-            // if (i === columns.length - 1) {
-            //     plot.append('g')
-            //         .attr('transform', 'translate(' + plotWidth + ',0)')
-            //         .call(d3.axisRight(yScale).ticks(4));
-            // }
-            // if (j === 0) {
-            //     plot.append('g')
-            //         .attr('transform', 'translate(0,' + plotHeight + ')')
-            //         .call(d3.axisBottom(xScale).ticks(4));
-            // }
-
             if (i === j) {
                 // Diagonal plots: Add dots and text
                 plot.selectAll('circle')
@@ -88,7 +76,7 @@ function renderScatterPlotMatrix(scatter_plot_data) {
                     .attr('cx', function(d) { return xScale(d[columns[i]]); })
                     .attr('cy', function(d) { return yScale(d[columns[j]]); })
                     .attr('r', 1.5)
-                    .style("fill", "orange")
+                    .style("fill", d => d.color)
                     .style('fill-opacity', 0.0);
 
                 plot.append('text')
@@ -99,17 +87,6 @@ function renderScatterPlotMatrix(scatter_plot_data) {
                     .style('font-weight', 'bold') // Increase font boldness
                     .style('font-size', '16px')
                     .text(columns[i]);
-                    // .each(function() { // Add background box
-                    //     var bbox = this.getBBox();
-                    //     plot.insert('rect', 'text')
-                    //         .attr('x', bbox.x - 5)
-                    //         .attr('y', bbox.y - 5)
-                    //         .attr('width', bbox.width + 10)
-                    //         .attr('height', bbox.height + 10)
-                    //         .style('fill', 'red')
-                    //         .style('fill-opacity', 0.2)
-                    //         .lower();
-                    // });
             } else {
                 // Non-diagonal plots: Add only dots
                 plot.selectAll('circle')
@@ -128,56 +105,29 @@ function renderScatterPlotMatrix(scatter_plot_data) {
 function renderAttributeTable(data) {
     console.log("Rendering Attribute Table");
 
-    const top4_attributes = data.top4_attributes;
-    const sum_sq_loadings = data.sum_sq_loadings;
 
-    const tableContainer = document.querySelector('#attribute-table');
+    const top4_attributes = data.scatter_plot_data.top4_attributes;
+    const sum_sq_loadings = data.sos_loadings;
 
-    // Create table element
-    const table = document.createElement('table');
+    const tableContainer = d3.select('#attribute-table');
 
-    // Create second header row for attribute names
-    const attributeRow = document.createElement('tr');
+    const table = tableContainer.append('table')
+                                .attr('class', 'table table-bordered table-striped')
+                                .style('margin-top', '20px');
 
-    // Create header for the "Feature" column
-    const attributeHeader = document.createElement('th');
-    attributeHeader.textContent = 'Feature';
-    attributeHeader.classList.add('header-cell'); // Add class for styling
-    attributeRow.appendChild(attributeHeader);
 
-    // Create table headers for attribute names
-    top4_attributes.forEach(attribute => {
-        const th = document.createElement('th');
-        th.textContent = attribute;
-        th.classList.add('header-cell'); // Add class for styling
-        attributeRow.appendChild(th);
-    });
+    const thead = table.append('thead');
+    const headerRow = thead.append('tr');
+    headerRow.append('th').text('Attribute');
+    headerRow.append('th').text('Sum Of Squared Loadings');
 
-    // Append the second header row to the table
-    table.appendChild(attributeRow);
-
-    // Create a row for sum of square loadings
-    const sumRow = document.createElement('tr');
-
-    // Create table data for sum of square loadings
-    const sumHeader = document.createElement('td');
-    sumHeader.textContent = 'Sum of Square Loadings';
-    sumHeader.classList.add('header-cell'); // Add class for styling
-    sumRow.appendChild(sumHeader);
-
-    // Create table data for sum of square loading values
-    sum_sq_loadings.forEach(sum => {
-        const td = document.createElement('td');
-        td.textContent = sum;
-        td.classList.add('content-cell'); // Add class for styling
-        sumRow.appendChild(td);
-    });
-
-    // Append the sum row to the table
-    table.appendChild(sumRow);
-
-    // Append the table to the container
-    tableContainer.appendChild(table);
+    const tbody = table.append('tbody');
+    
+    top4_attributes.forEach((attr, index) => {
+        let row = tbody.append('tr');
+        row.append('td').text(attr);
+        row.append('td').text(sum_sq_loadings[index].toFixed(4));
+    })
 }
 
 
