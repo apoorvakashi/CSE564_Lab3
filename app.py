@@ -7,6 +7,11 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from flask import jsonify
 
+
+from sklearn import manifold
+from sklearn.metrics import pairwise_distances
+
+
 values = {}
 
 app = Flask(__name__)
@@ -56,14 +61,13 @@ def receive_idi():
     return jsonify({'message': 'IDI received successfully',
                     "idi" : values["idi"],
                     "k" : values['k']})
-    
+
 
 @app.route('/elbow_plot_data')
 def elbow_plot_data():
     
     idi = values.get('idi', 0)
     k = values.get('k', 0)
-    print("IDI : ", idi)
     
     if idi == 0:
         return jsonify({'error': 'Dimensionality index not set'})
@@ -94,71 +98,123 @@ def elbow_plot_data():
 
 
 
-@app.route('/pca_idi_data')
-def pca_idi_data():
+# @app.route('/pca_idi_data')
+# def pca_idi_data():
     
-    idi = values.get('idi', 0)
-    k = values.get('k', 0)
+#     idi = values.get('idi', 0)
+#     k = values.get('k', 0)
+
+#     if idi == 0:
+#         return jsonify({'error': 'Dimensionality index not set'})
+#     if k == 0:
+#         return jsonify({'error': 'K value not set'})
     
-    print("IDI : " , idi)
-    print("K : " , k)
+#     pca = PCA(n_components=idi)
+#     pcs = pca.fit_transform(data_standardized)
+    
+#     loadings = pca.components_
+#     explained_variance_ratio = pca.explained_variance_ratio_
+#     squared_sum_loadings = np.sum(loadings ** 2, axis=0)
+#     top4_indices = np.argsort(squared_sum_loadings)[::-1][:4]
+
+#     top4_attributes = [df.columns[i] for i in top4_indices]
+#     top4_values = [round(squared_sum_loadings[i], 2) for i in top4_indices]
+#     top_features = df.columns[top4_indices].to_list()
+
+#     scatterplot_data = df[top4_attributes].to_dict(orient='records')
+    
+    
+#     #perform kmeans on selected k
+#     column_names = [f'PC{i+1}' for i in range(pcs.shape[1])]
+#     pca_df = pd.DataFrame(data=pcs, columns=column_names)
+#     kmeans = KMeans(n_clusters=k, random_state=0)
+#     kmeans.fit(pca_df)
+#     cluster_labels = kmeans.labels_
+#     pca_df['cluster_id'] = cluster_labels
+    
+    
+#     biplot_data = {
+#                 "sum_sq_loadings" : top4_values,
+#                 "pca_loadings": loadings[:2, :].tolist(),
+#                 "pca_scores": pcs[:, :2].tolist(),
+#                 "features": top_features,
+#                 "feature_names" : df.columns.to_list(),
+#                 "cluster_id" : pca_df['cluster_id'].to_list(),
+#                 "explained_variance_ratio": explained_variance_ratio[:2].tolist(),
+#                 "observation_names" : data['Name'].to_list()              
+#     }
+    
+#     scatter_plot_data = {
+#                 "top4_attributes": top4_attributes,
+#                 "scatterplot_data" : scatterplot_data,
+#                 "cluster_id" : pca_df['cluster_id'].to_list()
+#     }
+    
+#     chart_data = {
+#                 "biplot_data" : biplot_data,
+#                 "scatter_plot_data" : scatter_plot_data,
+#                 "sos_loadings" : top4_values
+#                     }
+    
+#     return jsonify(chart_data)
     
 
-    if idi == 0:
-        return jsonify({'error': 'Dimensionality index not set'})
+
+@app.route('/mds_data')
+def mds_data():
+    data_columns = []
+
+    euclidean_distances = pairwise_distances(df, metric='euclidean')
+    mds_data = manifold.MDS(n_components=2, dissimilarity='precomputed')
+    X = mds_data.fit_transform(euclidean_distances)
+
+    data_columns = pd.DataFrame(X, columns=['Comp1', 'Comp2'])
+    
+    k = values.get('k', 0)
     if k == 0:
         return jsonify({'error': 'K value not set'})
     
-    pca = PCA(n_components=idi)
-    pcs = pca.fit_transform(data_standardized)
-    
-    loadings = pca.components_
-    explained_variance_ratio = pca.explained_variance_ratio_
-    squared_sum_loadings = np.sum(loadings ** 2, axis=0)
-    top4_indices = np.argsort(squared_sum_loadings)[::-1][:4]
-
-    top4_attributes = [df.columns[i] for i in top4_indices]
-    top4_values = [round(squared_sum_loadings[i], 2) for i in top4_indices]
-    top_features = df.columns[top4_indices].to_list()
-
-    scatterplot_data = df[top4_attributes].to_dict(orient='records')
-    
-    
-    #perform kmeans on selected k
-    column_names = [f'PC{i+1}' for i in range(pcs.shape[1])]
-    pca_df = pd.DataFrame(data=pcs, columns=column_names)
     kmeans = KMeans(n_clusters=k, random_state=0)
-    kmeans.fit(pca_df)
+    kmeans.fit(data_standardized)
     cluster_labels = kmeans.labels_
-    pca_df['cluster_id'] = cluster_labels
     
-    
-    biplot_data = {
-                "sum_sq_loadings" : top4_values,
-                "pca_loadings": loadings[:2, :].tolist(),
-                "pca_scores": pcs[:, :2].tolist(),
-                "features": top_features,
-                "feature_names" : df.columns.to_list(),
-                "cluster_id" : pca_df['cluster_id'].to_list(),
-                "explained_variance_ratio": explained_variance_ratio[:2].tolist(),
-                "observation_names" : data['Name'].to_list()              
-    }
-    
-    scatter_plot_data = {
-                "top4_attributes": top4_attributes,
-                "scatterplot_data" : scatterplot_data,
-                "cluster_id" : pca_df['cluster_id'].to_list()
-    }
+    data_columns["cluster_id"] = cluster_labels
+    json_data = data_columns.to_dict(orient='records')
     
     chart_data = {
-                "biplot_data" : biplot_data,
-                "scatter_plot_data" : scatter_plot_data,
-                "sos_loadings" : top4_values
-                    }
+        'mds_data' : json_data,
+        'cluster_id' : data_columns['cluster_id'].to_list()
+    }
     
     return jsonify(chart_data)
-    
 
+@app.route('/mds_attr')
+def mds_attr():
+    data_columns = []
+    
+    dissimilarities = 1 - np.abs(df.corr())
+    mds = manifold.MDS(n_components=2, dissimilarity='precomputed')
+    X = mds.fit_transform(dissimilarities)
+
+    # Create DataFrame with MDS results
+    data_columns = pd.DataFrame(X, columns=['Comp1', 'Comp2'])
+    data_columns['feature'] = df.columns
+    
+    # Convert DataFrame to JSON
+    json_data = data_columns.to_dict(orient='records')
+    print(json_data)
+    
+    chart_data = {
+        'mds_attr': json_data
+    }
+    return jsonify(chart_data)
+
+
+@app.route('/pcp_data')
+def pcp_data():
+    # Prepare the data for PCP
+    data = df.to_dict(orient='records')
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True)

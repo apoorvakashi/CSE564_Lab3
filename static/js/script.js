@@ -7,21 +7,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     fetchandRenderScreePlot();
     fetchandRenderElbowPlot();
-    fetchandRenderBiPlot();
-    fetchandRenderScatterPlot();
+    fetchandRenderMDSDataPlot();
+    fetchandRenderMDSAttrPlot();
+    fetchandRenderPCPlot();
 });
-
-// function updateSelectedIDIValue() {
-//     // Get the selected_idi div element
-//     var selectedIDIElement = document.getElementById('selected_idi');
-//     // Update the content with the value of selectedComponents
-//     if (selected_idi === 0){
-//         selectedIDIElement.textContent = "Null";
-//     }
-//     else{
-//         selectedIDIElement.textContent = selected_idi;
-//     }
-// }
 
 // Function to load external JavaScript files dynamically
 function loadScript(url, callback) {
@@ -57,8 +46,7 @@ function fetchandRenderElbowPlot(){
         .catch(error => console.error('Error fetching elbow plot data:', error));
 }
 
-function fetchandRenderScatterPlot(){
-
+function fetchandRenderMDSDataPlot(){
     fetch('/receive_data', {
         method: 'POST',
         headers: {
@@ -74,46 +62,32 @@ function fetchandRenderScatterPlot(){
         console.error('Error:', error);
     });
 
-    fetch('/pca_idi_data')
-        .then(response => response.json())
-        .then(data => {
-            // Once data is fetched, create the scatter plot matrix
-            d3.select("#scatter-plot-container").selectAll("*").remove();
-            d3.select("#attribute-table").selectAll("*").remove();
-
-            renderScatterPlotMatrix(data.scatter_plot_data);
-            renderAttributeTable(data);
-        })
-        .catch(error => console.error('Error:', error));
-
-}
-
-function fetchandRenderBiPlot(){
-    fetch('/receive_data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({'idi' : selected_idi, 'k' : selected_k})
-    })
+    fetch('/mds_data')
     .then(response => response.json())
     .then(data => {
-        console.log(data); // Log the response from the Flask route
+        // Call the function to render the scree plot defined in ScreePlot.js
+        console.log("Rendering MDS DATA PLOT")
+        renderMDSDataPlot(data);
     })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-
-    fetch('/pca_idi_data')
-        .then(response => response.json())
-        .then(data => {
-            d3.select("#bi-plot-container").selectAll("*").remove();
-            renderBiPlot(data);
-        })
-    .catch(error => console.error('Error fetching bi plot data:', error));
-
+    .catch(error => console.error('Error fetching MDS Data plot data:', error));
 }
 
+function fetchandRenderMDSAttrPlot(){
+    fetch('/mds_attr')
+    .then(response => response.json())
+    .then(data => {
+        // Call the function to render the scree plot defined in ScreePlot.js
+        console.log("Rendering MDS Attr Plot")
+        renderMDSAttrPlot(data);
+    })
+    .catch(error => console.error('Error fetching MDS Attr plot data:', error));
+}
 
-
-
+function fetchandRenderPCPlot(){
+    fetch('/pcp_data')
+    .then(response => response.json())
+    .then(data => {
+        renderPCPlot(data);
+    })
+    .catch(error => console.error('Error fetching PCP data', error));
+}
