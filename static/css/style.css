@@ -46,6 +46,11 @@
     background-color: rgb(52, 52, 140);
 }
 
+.reset-image {
+    width: 20px; /* Adjust the width */
+    height: 20px; /* Adjust the height */
+}
+
 /* Ensure the layout doesn't break on smaller screens */
 @media (max-width: 991px) {
     .border-right {

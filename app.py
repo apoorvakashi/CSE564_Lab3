@@ -202,7 +202,6 @@ def mds_attr():
     
     # Convert DataFrame to JSON
     json_data = data_columns.to_dict(orient='records')
-    print(json_data)
     
     chart_data = {
         'mds_attr': json_data
@@ -213,8 +212,21 @@ def mds_attr():
 @app.route('/pcp_data')
 def pcp_data():
     # Prepare the data for PCP
-    data = df.to_dict(orient='records')
-    return jsonify(data)
+    k = values.get('k', 0)
+    if k == 0:
+        return jsonify({'error': 'K value not set'})
+    
+    kmeans = KMeans(n_clusters=k, random_state=0)
+    kmeans.fit(data_standardized)
+    cluster_labels = kmeans.labels_
+    
+    data = df.head(100).to_dict(orient='records')
+    chart_data = {
+        'pcp_data' : data,
+        'features' : df.columns.to_list(),
+        'cluster_id' : cluster_labels.tolist()[:100]
+    }
+    return jsonify(chart_data)
 
 if __name__ == '__main__':
     app.run(debug=True)

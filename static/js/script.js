@@ -7,10 +7,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     fetchandRenderScreePlot();
     fetchandRenderElbowPlot();
-    fetchandRenderMDSDataPlot();
     fetchandRenderMDSAttrPlot();
+    fetchandRenderMDSDataPlot();
     fetchandRenderPCPlot();
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Add event listener to the reset button
+    document.getElementById("reset-button1").addEventListener("click", handleReset);
+    document.getElementById("reset-button2").addEventListener("click", handleReset);
+});
+
+function handleReset() {
+
+    fetchandRenderMDSAttrPlot();
+    fetchandRenderPCPlot();
+}
 
 // Function to load external JavaScript files dynamically
 function loadScript(url, callback) {
@@ -83,11 +95,12 @@ function fetchandRenderMDSAttrPlot(){
     .catch(error => console.error('Error fetching MDS Attr plot data:', error));
 }
 
-function fetchandRenderPCPlot(){
+function fetchandRenderPCPlot(selectedAttributes = null){
     fetch('/pcp_data')
     .then(response => response.json())
     .then(data => {
-        renderPCPlot(data);
+        renderPCPlot(data, selectedAttributes);
     })
     .catch(error => console.error('Error fetching PCP data', error));
 }
+

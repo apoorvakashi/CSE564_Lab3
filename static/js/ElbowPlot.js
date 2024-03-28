@@ -67,8 +67,8 @@ function renderElbowPlot(data){
             svg.select("#selected-k").text("K : " + String(distortions.indexOf(d) + 1) );
             svg.select("#selected-distortion").text("Distortion : " + String(d.toFixed(2)));
 
-            fetchandRenderScatterPlot();
-            fetchandRenderBiPlot();
+            fetchandRenderMDSDataPlot();
+            fetchandRenderPCPlot();
         });
 
     
