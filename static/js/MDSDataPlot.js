@@ -47,12 +47,14 @@ function renderMDSDataPlot(mds_chart_data){
     svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(xScale).tickSizeOuter(0))
+        .style("color", "white")
         .selectAll("text")
         .style("font-size", "14px")
         .style("font-weight", "bold");
 
     svg.append('g')
         .call(d3.axisLeft(yScale).tickSizeOuter(0))
+        .style("color", "white")
         .selectAll("text")
         .style("font-size", "14px")
         .style("font-weight", "bold");
@@ -61,6 +63,7 @@ function renderMDSDataPlot(mds_chart_data){
         .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 30) + ")")
         .style("text-anchor", "middle")
         .style("font-size", "16px")
+        .style("fill", "white")
         .style("font-weight", "bold")
         .text("Component 1");
 
@@ -72,6 +75,7 @@ function renderMDSDataPlot(mds_chart_data){
         .attr("dy", "1em")
         .style("text-anchor", "middle")
         .style("font-size", "16px")
+        .style("fill", "white")
         .style("font-weight", "bold")
         .text("Component 2");
 

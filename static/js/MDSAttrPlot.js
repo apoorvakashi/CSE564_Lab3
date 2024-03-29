@@ -40,12 +40,14 @@ function renderMDSAttrPlot(mdsdata){
     svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(xScale).tickSizeOuter(0))
+        .style("color", "white")
         .selectAll("text")
         .style("font-size", "14px")
         .style("font-weight", "bold");
 
     svg.append('g')
         .call(d3.axisLeft(yScale).tickSizeOuter(0))
+        .style("color", "white")
         .selectAll("text")
         .style("font-size", "14px")
         .style("font-weight", "bold");
@@ -54,6 +56,7 @@ function renderMDSAttrPlot(mdsdata){
         .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 30) + ")")
         .style("text-anchor", "middle")
         .style("font-size", "16px")
+        .style("fill", "white")
         .style("font-weight", "bold")
         .text("Component 1");
 
@@ -65,6 +68,7 @@ function renderMDSAttrPlot(mdsdata){
         .attr("dy", "1em")
         .style("text-anchor", "middle")
         .style("font-size", "16px")
+        .style("fill", "white")
         .style("font-weight", "bold")
         .text("Component 2");
 
@@ -90,7 +94,7 @@ function renderMDSAttrPlot(mdsdata){
         .text(d => d.feature)
         .attr("font-size", "10px")
         .attr("font-weight", "bold")
-        .attr("fill", "black");
+        .attr("fill", "white");
 
     svg.selectAll("circle")
         .data(data)
@@ -116,7 +120,7 @@ function renderMDSAttrPlot(mdsdata){
             } else {
                 console.log("Click")
                 circle.classed("selected", true);
-                circle.style("stroke", "black");
+                circle.style("stroke", "white");
                 circle.style("stroke-width", "2px"); // Add stroke
                  // Add stroke
                 selectedAttributes.push(d.feature); // Add to selectedAttributes
@@ -150,7 +154,7 @@ function renderMDSAttrPlot(mdsdata){
                     .attr("y1", yScale(startPoint.Comp2))
                     .attr("x2", xScale(endPoint.Comp1))
                     .attr("y2", yScale(endPoint.Comp2))
-                    .attr("stroke", "black")
+                    .attr("stroke", "white")
                     .attr("stroke-width", 1)
                     .attr("marker-end", "url(#arrow)")
                     .style("stroke-dasharray", ("3, 3")); // Add dashed style to line

@@ -2,6 +2,10 @@ function renderPCPlot(data, selectedAttributes=null) {
     var pcpData = data.pcp_data;
     var features;
 
+    categorical = ['Reputation', 'Position2', 'Club', 'Body Type', 'Preferred Foot']
+    numerical = ['Age', 'Value','Wage','Acceleration', 'Overall', 'Balance','Stamina'
+             ,'HeadingAccuracy', 'StandingTackle', 'SlidingTackle' ]
+
     if (selectedAttributes != null && selectedAttributes.length > 1){
         features = selectedAttributes
     }
@@ -29,7 +33,7 @@ function renderPCPlot(data, selectedAttributes=null) {
     });
 
     var margin = { top: 30, right: 10, bottom: 60, left: 50 },
-        width = 1400 - margin.left - margin.right,
+        width = 1600 - margin.left - margin.right,
         height = 700 - margin.top - margin.bottom;
 
     var x = d3.scalePoint().range([0, width]).padding(1),
@@ -48,11 +52,28 @@ function renderPCPlot(data, selectedAttributes=null) {
     // Extract the list of dimensions and create a scale for each.
     x.domain(features);
 
+    // features.forEach(function (d) {
+    //     y[d] = d3.scaleLinear()
+    //         .domain(d3.extent(pcpData, function (p) { return +p[d]; }))
+    //         .range([height, 0]);
+    // });
+
     features.forEach(function (d) {
-        y[d] = d3.scaleLinear()
-            .domain(d3.extent(pcpData, function (p) { return +p[d]; }))
-            .range([height, 0]);
+        if (numerical.includes(d)) {
+            // Numerical feature
+            y[d] = d3.scaleLinear()
+                .domain(d3.extent(pcpData, function (p) { return +p[d]; }))
+                .range([height, 0]);
+        } else {
+            // Categorical feature
+            var categories = pcpData.map(function(p) { return p[d]; });
+            y[d] = d3.scalePoint()
+                .domain(categories)
+                .range([height, 0])
+                .padding(0.1); // Adjust padding as needed
+        }
     });
+    
 
     lines = svg.selectAll("path")
         .data(pcpData)
@@ -66,6 +87,7 @@ function renderPCPlot(data, selectedAttributes=null) {
     // Returns the path for a given data point.
     function path(d) {
         return line(features.map(function (p) {
+            
             return [x(p), y[p](d[p])];
         }));
     }
@@ -75,6 +97,8 @@ function renderPCPlot(data, selectedAttributes=null) {
         .enter().append("g")
         .attr("class", "dimension")
         .style("font-weight", "bold")
+        .style("font-size", "12px")
+        .style("color", "white")
         .attr("transform", function (d) { return "translate(" + x(d) + ")"; });
 
     // Add an axis and title.
@@ -85,6 +109,8 @@ function renderPCPlot(data, selectedAttributes=null) {
         .attr("class", "title")
         .attr("y", -9)
         .style("font-weight", "bold")
+        .style("font-size", "12px")
+        .style("color", "white")
         .text(function (d) { return d; });
 
     // Add text labels for each axis.
@@ -93,8 +119,9 @@ function renderPCPlot(data, selectedAttributes=null) {
         .attr("transform", "rotate(0)")
         .attr("y", height + 30)
         .style("text-anchor", "middle")
-        .style("font-size", "10px")
+        .style("font-size", "12px")
         .style("font-weight", "bold")
+        .style("fill", "white")
         .text(function (d) { return d; });
     
         // Drag behavior for axes reordering
@@ -120,19 +147,18 @@ function renderPCPlot(data, selectedAttributes=null) {
                 // Move left
                 features.splice(currentIndex - 1, 0, features.splice(currentIndex, 1)[0]);
                 redrawAxes();
-                svg.selectAll(".lines-group").remove()
                 redrawLines(features);
             } else if (dx > threshold && currentIndex < features.length - 1 && currentIndex + 1 !== draggedIndex) {
                 // Move right
                 features.splice(currentIndex + 1, 0, features.splice(currentIndex, 1)[0]);
                 redrawAxes();
-                svg.selectAll(".lines-group").remove()
                 redrawLines(features);
             }
         }
 
         function dragend(event, d) {
             draggedIndex = null;
+            redrawLines()
         }
 
         function redrawAxes() {
@@ -153,16 +179,18 @@ function renderPCPlot(data, selectedAttributes=null) {
 
             svg.selectAll("path")
             .data(pcpData)
-            .enter().append("path")
-            .attr("d", path2)
-            .attr("class", "lines-group")
-            .style("stroke", d => d.color) // Set the color for the lines
-            .style("stroke-width", "0.5px")
-            .style("fill", "none");
+            .transition()
+            .duration(500)
+            .attr("d", path)
     
         // Returns the path for a given data point.
             function path2(d) {
                 return line(features.map(function (p) {
+                    if(p === "Wage")
+                    {
+                        console.log(x(p))
+                        console.log(y[p](d[p]))
+                    }
                     return [x(p), y[p](d[p])];
                 }));
             }

@@ -31,14 +31,14 @@ function renderScreePlot(screePlotData, selected_components = selected_idi) {
     svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(x).tickSizeOuter(0))
-        .selectAll("text")
         .style("font-size", "14px")
+        .style("color", "white")
         .style("font-weight", "bold");
 
     svg.append('g')
         .call(d3.axisLeft(y).tickSizeOuter(0))
-        .selectAll("text")
         .style("font-size", "14px")
+        .style("color", "white")
         .style("font-weight", "bold");
 
     // X-axis label
@@ -47,6 +47,7 @@ function renderScreePlot(screePlotData, selected_components = selected_idi) {
         .style("text-anchor", "middle")
         .style("font-size", "16px")
         .style("font-weight", "bold")
+        .style("fill", "white")
         .text("Number of Components");
 
     // Y-axis label
@@ -58,6 +59,7 @@ function renderScreePlot(screePlotData, selected_components = selected_idi) {
         .style("text-anchor", "middle")
         .style("font-size", "16px")
         .style("font-weight", "bold")
+        .style("fill", "white")
         .text("Eigenvalue");
 
     svg.selectAll(".bar")

@@ -57,3 +57,7 @@
         border-right: none;
     }
   }
+
+.graph-container{
+    background-color: black;
+}

@@ -81,6 +81,7 @@ function renderElbowPlot(data){
         .attr("transform", "translate(0," + (height + margin.top) + ")")
         .style("font-size", "14px")
         .style("font-weight", "bold")
+        .style("color", "white")
         .call(d3.axisBottom(xScale));
 
     // Add y axis
@@ -88,6 +89,7 @@ function renderElbowPlot(data){
         .attr("transform", "translate(" + margin.left + ",0)")
         .style("font-size", "14px")
         .style("font-weight", "bold")
+        .style("color", "white")
         .call(d3.axisLeft(yScale));
 
     svg.append("text")
@@ -96,6 +98,7 @@ function renderElbowPlot(data){
         .style("text-anchor", "middle")
         .style("font-size", "16px")
         .style("font-weight", "bold")
+        .style("fill", "white")
         .text("K value");
     
     // Add y-axis label
@@ -106,6 +109,7 @@ function renderElbowPlot(data){
         .style("text-anchor", "middle")
         .style("font-size", "16px")
         .style("font-weight", "bold")
+        .style("fill", "white")
         .text("Distortion");
 
     // var textBoxWidth = 180;
